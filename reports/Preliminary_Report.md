@@ -4,6 +4,8 @@
 We aim to create an image editing program of the caliber of Microsoft Paint. Our minimum viable product is a program that can open an image file/create an empty image in the form of a bitmap, let the user edit the image with mouse input, and save the resulting image. We would like to enhance this by adding new tool options (e.g. , colors, image formatting) with an input API that could then be attached to a GUI, etc. We are most interested in image manipulation tools, rather than building the perfect GUI.
 
 ## Completed Trello Cards:
+Since beginning the project, we have managed to get GTK working, and have used it to instantiate a blank image file, edit the image file, but not save it. Additionally, we cannot open existing image files. We have the basics of a floodfill algorithm in the repository, but it isn't integrated into the code yet because we need to access specific pixel values to do so. We plan to implement opening existing files and saving edited files over the course of this coming sprint, as well as integrating the floodfill tool.
+
 Completed Project proposal: [github](https://github.com/SeanCCarter/SoftSysDebonairDaffodils/blob/master/reports/proposal.md)
 
 Implement a program that can view an image in C [github](https://github.com/SeanCCarter/SoftSysDebonairDaffodils/blob/master/pixmap_test.c)
