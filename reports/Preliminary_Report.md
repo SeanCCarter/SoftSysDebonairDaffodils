@@ -5,15 +5,20 @@ We aim to create an image editing program of the caliber of Microsoft Paint. Our
 
 ## Completed Trello Cards:
 Completed Project proposal: [github](https://github.com/SeanCCarter/SoftSysDebonairDaffodils/blob/master/reports/proposal.md)
+
 Implement a program that can view an image in C [github](https://github.com/SeanCCarter/SoftSysDebonairDaffodils/blob/master/pixmap_test.c)
+
 Implement a program that uses mouse events to edit an image [github](https://github.com/SeanCCarter/SoftSysDebonairDaffodils/blob/master/pixmap_test.c)
+
 Implement one extra tool [github](https://github.com/SeanCCarter/SoftSysDebonairDaffodils/blob/master/flood_fillDEV.c)
 
 ## Annotated Bibliography:
 (http://homepages.inf.ed.ac.uk/rbf/BOOKS/PHILLIPS/cips2ed.pdf)
 This is an interesting resource for image processing in C - its basic chapters could be useful while we learn to interact with with images in C (loading, changing pixel values, saving), and later chapters could be foundation for the tools in our stretch goals.
+
 (http://www.programmingsimplified.com/c/graphics.h)
 This resource is a thorough exploration of the standard graphics library, with a large number of useful examples. We think that it could be another place to find code which we can expand upon.
+
 (https://developer.gnome.org/gtk-tutorial/stable/)
 We are using gtk as a basis for image editing, and the documentation on what it can do is instrumental to our being able to work with it in creative ways. The tutorial was a helpful kicking off point for the project.
 
