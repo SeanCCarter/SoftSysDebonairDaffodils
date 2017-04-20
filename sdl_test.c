@@ -5,6 +5,11 @@
 
     gcc -o myprogram myprogram.c -lSDL2
 
+
+    (here specifically: 
+    gcc sdl_test.c -o sdlt `sdl2-config --cflags --libs`
+		todo: makefile that jazz!)
+
 */
 
 
@@ -18,63 +23,121 @@
 #include <stdlib.h>
 
 
-int CANVAS_XWIDTH = 400;
-int CANVAS_YWIDTH = 400;
+int CANVAS_XWIDTH = 360;
+int CANVAS_YWIDTH = 240;
 int CANVAS_DEPTH = 4;
 int CANVAS_BYTES; // should get set to X*Y*depth
 int STRIDE; // for ease of calculation later; ideally X*depth?..
 
 char C_WHITE = 0xFF;
 
+int min_of(int a, int b) {
+	// utility for getting the lower of two options.
+	if (a < b) {
+		return a;
+	}
+	return b;
+}
 
-typedef struct pixel {
+int max_of(int a, int b) {
+	// utility for getting the greater of two options.
+	if (a > b) {
+		return a;
+	}
+	return b;
+}
+
+
+typedef struct pixel { // tuple-esque way of returning pixel data.
 	uint8_t a;
 	uint8_t r;
 	uint8_t g;
 	uint8_t b;
 } Pixel;
 
+typedef struct tool {
+	int radius;
+	uint8_t r; // more efficient to use an int8, space-wise.
+	uint8_t g; // or perhaps a color enum?
+	uint8_t b;
+} Tool; // or could just do global variables, but anyways.
+
+Tool* make_tool() {
+	// initializes a tool of radius three.
+	Tool* t = malloc(sizeof(Tool));
+	t->radius = 3;
+	t->r = 0;
+	t->g = 0;
+	t->b = 0;
+	return t;
+}
+
+void draw(SDL_Surface *surface, int x, int y, Tool* t) {
+	// draws a... "circle" (actually a square), within the boundaries.
+	uint8_t r = t->r;
+	uint8_t g = t->g;
+	uint8_t b = t->b;
+
+	int i, j;
+
+	int startx = max_of(x - t->radius, 0);
+	int endx = min_of(x + t->radius, CANVAS_XWIDTH);
+	int starty = max_of(y - t->radius, 0);
+	int endy = min_of(y + t->radius, CANVAS_YWIDTH);
+
+	for (i = startx; i <= endx; i++) {
+		for (j = starty; j <= endy; j++) { // <= or <  -- todo: check.
+			write_pixel_value(surface, i, j, r, g, b);
+		}
+	}
+}
+
+
 
 void print_pixel(Pixel* p) {
+	// utility for printing the values of a Pixel*.
 	printf("a:%u\tr:%u\tg:%u\tb:%u\n", p->a, p->r, p->g, p->b);
 }
 
 
-typedef enum {false, true} bool;
+typedef enum {false, true} bool; // utility because i like true/false.
 
 
 Pixel* get_pixel_value(SDL_Surface *surface, int x, int y) {
-	int depth = surface->format->BytesPerPixel; // should be CANVAS_DEPTH but better safe than sorry.
-	uint8_t* p = (uint8_t) surface->pixels + y*surface->pitch + x*depth;
+	// Queries a given surface at x and y, returning the values of the pixel stored there as a Pixel.
+	int depth = surface->format->BytesPerPixel; // should usually be CANVAS_DEPTH
+	uint8_t* p = (uint8_t *) surface->pixels;
+	int offset = y * (surface->pitch) + x * depth; // bytes until the relevant ones.
 	Pixel* res = malloc(sizeof(Pixel));
-	res->a = (uint8_t) p[3];
-	res->r = (uint8_t) p[0];
-	res->g = (uint8_t) p[1];
-	res->b = (uint8_t) p[2];
-	return res; // be sure to free() later.
+	res->a = (uint8_t) p[offset + 3]; // might be mixing up the ARGB channel order. TODO: check.
+	res->b = (uint8_t) p[offset + 0];
+	res->g = (uint8_t) p[offset + 1];
+	res->r = (uint8_t) p[offset + 2];
+	return res; // be sure to free() the pixel later.
 }
 
 void write_pixel_value(SDL_Surface *surface, int x, int y, uint8_t r, uint8_t g, uint8_t b) {
+	// writes r, g, b to location x, y on surface. Might mix up RGB vs ARGB, BGR, etc.
 	int depth = surface->format->BytesPerPixel;
 	int offset = y * (surface->pitch) + x * depth;
 	uint8_t* p = (uint8_t *) surface->pixels;
 	// uint8_t* p = (uint8_t) surface->pixels + y * surface->pitch + x * depth;
-	p[offset] = r;
-	p[offset+1] = g;
-	p[offset+2] = b;
+	p[offset + 0] = b;
+	p[offset + 1] = g;
+	p[offset + 2] = r;
 }
+
 
 
 int main(int argc, char* argv[]) {
 
 	SDL_Window* window = NULL;
-	SDL_Renderer* renderer = NULL; // not sure if NULL declaration is necessary.
+	SDL_Renderer* renderer = NULL;  // not sure if NULL declaration is necessary.
+									// also might not actually ever need a renderer.
 	SDL_Surface* canvas = NULL;
-	SDL_Event event; // or perhaps a different event handler?
+	SDL_Event event;
 
-	unsigned char r_v = 0xFF;
-	unsigned char g_v = 0xFF;
-	unsigned char b_v = 0xFF;
+	Tool* user_tool = make_tool();
 
 	int cursor_x = 0;
 	int cursor_y = 0;
@@ -84,8 +147,6 @@ int main(int argc, char* argv[]) {
 		fprintf(stderr, "SDL couldn't init :(.  Error: %s\n", SDL_GetError());
 		exit(1);
 	}
-
-	// SDL_CreateWindowAndRenderer(CANVAS_XWIDTH, CANVAS_YWIDTH,&window, &renderer);
 
 	window = SDL_CreateWindow( "test window", 	SDL_WINDOWPOS_UNDEFINED, 	
 												SDL_WINDOWPOS_UNDEFINED, 
@@ -103,7 +164,7 @@ int main(int argc, char* argv[]) {
 
 	canvas = SDL_GetWindowSurface(window);
 
-	SDL_FillRect(canvas, NULL, SDL_MapRGB(canvas->format, r_v, g_v, b_v)); // is 0xFF the proper syntax here?
+	SDL_FillRect(canvas, NULL, SDL_MapRGB(canvas->format, 0xFF, 0xFF, 0xFF)); // is 0xFF the proper syntax here?
 	
 	SDL_UpdateWindowSurface(window);
 
@@ -142,39 +203,45 @@ int main(int argc, char* argv[]) {
 						}
 						break;
 					case SDLK_r:
-						// SDL_SetRenderDrawColor(renderer, 255,0,0,255);
+						user_tool->r = 255;
+						user_tool->g = 0;
+						user_tool->b = 0;
 						break;
 					case SDLK_k:
-						// SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+						user_tool->r = 0;
+						user_tool->g = 0;
+						user_tool->b = 0;
 						break;
 					case SDLK_g:
-						// SDL_SetRenderDrawColor(renderer, 0,255,0,255);
+						user_tool->r = 0;
+						user_tool->g = 255;
+						user_tool->b = 0;
 						break;
 					case SDLK_b:
-						// SDL_SetRenderDrawColor(renderer, 0,0,255,255);
+						user_tool->r = 0;
+						user_tool->g = 0;
+						user_tool->b = 255;
 						break;
 					case SDLK_w:
-						// SDL_SetRenderDrawColor(renderer, 255,255,255,255);
+						user_tool->r = 255;
+						user_tool->g = 255;
+						user_tool->b = 255;
+						break;
+					case SDLK_LEFTBRACKET:
+						user_tool->radius = max_of(user_tool->radius - 1, 0);
+						break;
+					case SDLK_RIGHTBRACKET:
+						user_tool->radius = user_tool->radius + 1; // does ++ syntax work here?
 						break;
 					default:
 						fprintf(stdout, "Unrecognized key.\n");
 						break;
 				}
-				// r_v = (r_v - 10);
-				// g_v = (g_v - 10); // does this work with unsigned chars?
-				// b_v = (b_v - 10);
 			}
-			// else if (event.type == )
 		}
-	// SDL_RenderDrawPoint(renderer, cursor_x, cursor_y);	
-	// SDL_RenderPresent(renderer);
-	puts("about to write pixel value\n");
-	
 
-	write_pixel_value(canvas, cursor_x, cursor_y, (uint8_t) 77, (uint8_t) 77, (uint8_t) 77);
+	draw(canvas, cursor_x, cursor_y, user_tool);
 	
-	puts("wrote pixel value\n");
-
 	SDL_UpdateWindowSurface(window);
 
 	}
@@ -189,15 +256,3 @@ int main(int argc, char* argv[]) {
 	 				 // this is to see something for a bit then clean up on the way out.
 
 }
-
-
-// SDL_Window *window;
-// SDL_Renderer *renderer;
-// SDL_CreateWindowAndRenderer(800, 600, 0, &window, &renderer);
-
-// //Probably on a loop
-//   SDL_RenderDrawPoint(renderer, 400, 300); //Renders on middle of screen.
-//   SDL_RenderPresent(renderer);
-
-
-//  // SDL_RenderReadPixels(SDL_RENDERER* renderer, SDL_Rect* rect, Uint32 format, void* pixels, int pitch)
