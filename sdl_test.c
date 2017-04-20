@@ -128,8 +128,50 @@ void write_pixel_value(SDL_Surface *surface, int x, int y, uint8_t r, uint8_t g,
 }
 
 
+void save_as(SDL_Surface *surface, char* filename) {
+	int w = surface->w;
+	int h = surface->h;
+	int depth = surface->format->BytesPerPixel;
+
+	int pitch = surface->pitch;
+
+	uint8_t* p = (uint8_t *) surface->pixels;
+
+	FILE* fd = fopen(filename, "w");
+
+	// for now, disregarding w, h, and pitch.
+	// fprintf(fd, "%i\n", w);
+	// fprintf(fd, "%i\n", h);
+	// fprintf(fd, "%i\n", pitch);
+	// fprintf(fd, "%d\n", p);
+	fwrite(p, sizeof(uint8_t), w*h*depth, fd);
+	fclose(fd);
+}
+
+void load_as(SDL_Surface *surface, char* filename) {
+	//expects the file to already exist probably.
+	// also can't handle size changes.
+	int w = surface->w;
+	int h = surface->h;
+	int depth = surface->format->BytesPerPixel;
+
+	int pitch = surface->pitch;
+
+	uint8_t* p = (uint8_t *) surface->pixels;
+
+	FILE* fd = fopen(filename, "r");
+
+	fread(p, sizeof(uint8_t), w*h*depth, fd);
+	fclose(fd);
+
+
+
+}
+
 
 int main(int argc, char* argv[]) {
+
+	char* filename = "saved.image";
 
 	SDL_Window* window = NULL;
 	SDL_Renderer* renderer = NULL;  // not sure if NULL declaration is necessary.
@@ -232,6 +274,16 @@ int main(int argc, char* argv[]) {
 						break;
 					case SDLK_RIGHTBRACKET:
 						user_tool->radius = user_tool->radius + 1; // does ++ syntax work here?
+						break;
+					case SDLK_s: // save
+						printf("Saving...\n");
+						save_as(canvas, filename);
+						printf("Saved.\n");
+						break;
+					case SDLK_l:
+						printf("Loading...\n");
+						load_as(canvas, filename);
+						printf("Loaded.\n");
 						break;
 					default:
 						fprintf(stdout, "Unrecognized key.\n");
