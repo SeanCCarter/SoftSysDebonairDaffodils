@@ -1,4 +1,6 @@
 /*
+	Package Location: sudo apt-get install libsdl2-dev
+	
     gcc -o myprogram myprogram.c `sdl2-config --cflags --libs` 
 
     or

@@ -1,3 +1,2 @@
-make: pixmap_test.c
-	gcc -Wall -g pixmap_test.c -o pmt `pkg-config --cflags gtk+-2.0` \
-`pkg-config --libs gtk+-2.0`
+make: sdl_test.c
+	gcc sdl_test.c -o sdlt `sdl2-config --cflags --libs`
