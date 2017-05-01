@@ -45,6 +45,7 @@ After running the program, you can use the mouse cursor to move your brush, and 
 - ]: Make brush smaller
 
 By doing this, you can produce incredible masterpieces like this:
+
 ![A beautiful picture](./demos/mona-lisa-equivilent)
 
 ## License 
