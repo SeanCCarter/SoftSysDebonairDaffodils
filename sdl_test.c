@@ -94,6 +94,41 @@ void draw(SDL_Surface *surface, int x, int y, Tool* t) {
 	}
 }
 
+void draw2(SDL_Surface *surface, int x, int y, Tool* t) {
+	// draws a... "circle" (actually a square), within the boundaries.
+	uint8_t r = t->r;
+	uint8_t g = t->g;
+	uint8_t b = t->b;
+
+	int i, j;
+
+	int startx = max_of(x, 0);
+	int endx = min_of(x, CANVAS_XWIDTH);
+	int starty = max_of(y, 0);
+	int endy = min_of(y, CANVAS_YWIDTH);
+
+	for (i = startx; i <= endx; i++) {
+		for (j = starty; j <= endy; j++) { // <= or <  -- todo: check.
+			write_pixel_value(surface, i, j, r, g, b);
+		}
+	}
+}
+
+
+int pix_comp(Pixel* pix1, Pixel* pix2) {
+	// Helper function for determining whether two pixels are the same composition or not
+	if(pix1->r == pix2->r && 
+    	pix1->g == pix2->g && 
+    	pix1->b == pix2->b) 
+	{
+    	return 1; 
+	}
+
+    else {
+    	return 0;
+    }
+}
+
 
 
 void print_pixel(Pixel* p) {
@@ -127,6 +162,7 @@ void write_pixel_value(SDL_Surface *surface, int x, int y, uint8_t r, uint8_t g,
 	p[offset + 0] = b;
 	p[offset + 1] = g;
 	p[offset + 2] = r;
+
 }
 
 
@@ -171,6 +207,53 @@ void load_as(SDL_Surface *surface, char* filename) {
 }
 
 
+//Experimental floodfill
+void floodFill(int x,int y, Pixel* orig, Tool* fill, SDL_Surface *surface) {
+	/*
+	x,y - coordinates of the pixel
+	orig - original color of pixel
+	fill - new color for pixel
+	surface - canvas user is working on
+	*/
+	
+	printf("recursing.\n");
+	Pixel* pix = get_pixel_value(surface,x,y);
+	Pixel* tool_color = malloc(sizeof(Pixel));
+	tool_color->r = fill->r;
+	tool_color->g = fill->g;
+	tool_color->b = fill->b;
+	
+    if(pix_comp(orig, pix) == 1 && pix_comp(pix, tool_color) == 0) // make a function that compares
+    {
+        // putpixel(x,y,fill);
+        printf("writing.\n");
+        write_pixel_value(surface,x,y,orig->r,orig->g,orig->b);
+        if (x+1 < (CANVAS_XWIDTH)) {
+        	draw2(surface, x, y, fill);
+        	floodFill(x+1,y,orig,fill,surface);
+        }
+        if (x+1 < (CANVAS_YWIDTH)) {
+        	draw2(surface, x, y, fill);
+        	floodFill(x,y+1,orig,fill,surface);
+        }
+        if (x-1 > -1) {
+        	draw2(surface, x, y, fill);
+        	floodFill(x-1,y,orig,fill,surface);
+    	}
+        if (y-1 > -1) {
+        	draw2(surface, x, y, fill);
+        	floodFill(x,y-1,orig,fill,surface);
+    	}
+    }
+    free(pix);
+    free(tool_color);
+    return;
+
+     // either make a one pixel tool specifically for floodFill or make the step size depend on the tool being used
+    
+}
+
+
 int main(int argc, char* argv[]) {
 
 	char* filename = "saved.image";
@@ -182,10 +265,13 @@ int main(int argc, char* argv[]) {
 	SDL_Event event;
 
 	Tool* user_tool = make_tool();
+	Tool* fill_tool = make_tool();
+	fill_tool->radius = 1;
 
 	int cursor_x = 0;
 	int cursor_y = 0;
-
+	int mouse_x;
+	int mouse_y;
 
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		fprintf(stderr, "SDL couldn't init :(.  Error: %s\n", SDL_GetError());
@@ -287,6 +373,49 @@ int main(int argc, char* argv[]) {
 						load_as(canvas, filename);
 						printf("Loaded.\n");
 						break;
+					
+
+
+					default:
+						fprintf(stdout, "Unrecognized key.\n");
+						break;
+				}
+			}
+			else if (event.type == SDL_MOUSEBUTTONDOWN) {
+				// switch (event.type) {
+				switch (event.button.button) {
+					case SDL_BUTTON_LEFT:
+					// case SDL_MouseButtonEvent:
+					// case SDL_BUTTON(SDL_GetMouseState(NULL,NULL)) == SDL_BUTTON_LEFT:
+						// printf("clicked.\n");
+						SDL_GetMouseState(&mouse_x, &mouse_y);
+						cursor_x = mouse_x;
+						cursor_y = mouse_y;
+						break;
+					case SDL_BUTTON_RIGHT:
+						SDL_GetMouseState(&mouse_x, &mouse_y);
+						printf("filling.\n");
+						Pixel* pix = get_pixel_value(canvas, mouse_x,mouse_y);
+						floodFill(mouse_x, mouse_y, pix, fill_tool, canvas);
+						break;
+
+
+					default:
+						fprintf(stdout, "Unrecognized key.\n");
+						break;
+				}
+			}
+
+			else if (event.type == SDL_MOUSEMOTION && event.motion.state == SDL_PRESSED) {
+				switch (event.type) {
+					case SDL_MOUSEMOTION:
+						printf("dragging.\n");
+						SDL_GetMouseState(&mouse_x, &mouse_y);
+						cursor_x = mouse_x;
+						cursor_y = mouse_y;
+						break;
+
+
 					default:
 						fprintf(stdout, "Unrecognized key.\n");
 						break;
