@@ -12,7 +12,11 @@ Our project was a simpler tool, designed to edit a [pixmap](https://en.wiktionar
 Sketchy-Sketch is a large program built around editing a single, very long array (of size height\*width\*4). Starting from the left hand corner, every value in the array represents an (r,g,b,a) value, which are indexed and edited by various helper functions that we have created. We use the [SDL2 library](https://wiki.libsdl.org/) to display this in a new window, as well as access mouse and key commands that control what pixels are changing.
 
 ##### Finding the Right Library
-We spent a lot of time identifying the SDL2 library as one that 
+We spent a lot of time identifying the SDL2 library as the one that we needed. It is important do discuss this , since much of the difficulty of the project came from finding tools that either contained the full suite of options that we needed, or were compatable with each other. SDL is designed to provide access to low level mouse and key events, while displaying a canvas. This made it ideal for our purposes. For future students who may wish to work with pixel values in the same way, these were some of the ones that didn't work:
+
+- GTK: GTK provided good tools and a canvas, but no access to individula pixel values
+- GTK + Keras: The GTK documentation stated that Keras allowed access to individual pixel values, but the two libraries are not actually compatable. 
+- \<graphics.h\> : Unfortunately, this was excellent, but it was a windows only library
 
 ##### The Pixmap
 
@@ -21,4 +25,8 @@ We spent a lot of time identifying the SDL2 library as one that
 ##### Floodfill
 
 ### Results
+
+###### Floodfill
+
+Here, you can see how floodfill can quickly color in all of the pixels in a contained area.
 <iframe width="560" height="315" src="https://www.youtube.com/embed/rpH6GT8m4so" frameborder="0" allowfullscreen></iframe>
