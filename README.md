@@ -11,7 +11,14 @@ Our project was a simpler tool, designed to edit a [pixmap](https://en.wiktionar
 ### Implementation
 Sketchy-Sketch is a large program built around editing a single, very long array (of size height\*width\*4). Starting from the left hand corner, every value in the array represents an (r,g,b,a) value, which are indexed and edited by various helper functions that we have created. We use the [SDL2 library](https://wiki.libsdl.org/) to display this in a new window, as well as access mouse and key commands that control what pixels are changing.
 
+##### Finding the Right Library
+We spent a lot of time identifying the SDL2 library as one that 
+
 ##### The Pixmap
+
+##### Opening and Saving Files
+
+##### Floodfill
 
 ### Results
 <iframe width="560" height="315" src="https://www.youtube.com/embed/rpH6GT8m4so" frameborder="0" allowfullscreen></iframe>
