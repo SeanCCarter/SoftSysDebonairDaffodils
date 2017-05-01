@@ -19,7 +19,7 @@ We spent a lot of time identifying the SDL2 library as the one that we needed. I
 - \<graphics.h\> : Unfortunately, this was excellent, but it was a windows only library
 
 ##### The Pixmap
-The core of the project is the implementation
+The core of the project is the implementation of the pixel map. The image is represented through a long, one-dimensional array of pixel values. We interact with these values using an abstraction on the x,y coordinate system, with x changing the index of the array by one pixel and y changing the index by whatever the length of the row is, providing the illusion of a two dimensional array. This implementation makes the pixmap far easier to work with and greatly simplified many of our image editing functions.
 
 ##### Opening and Saving Files
 The implimentaion of file saving is very simple. We open a standard file object, write the array to it bit by bit, and then close the file. We open the file in the same way - by assuming the file only contains uint8_t integers. This does require us to make assumptions about the size of the image, since we do not encode any of that information inside of the file itself.
@@ -27,6 +27,8 @@ The implimentaion of file saving is very simple. We open a standard file object,
 ##### Floodfill
 The floodFill() function implements a basic flood filling algorithm. Given a start pixel, determined by the pixel the user right clicks on, the algorithm looks at the pixel value, determines if it is the same as the original pixel that was being filled, and either fills and recursively calls itself on all surrounding pixels if it is or ceases activity if it isn't. 
 In implementation, this algorithm had a rather rocky start. At first, it wouldn't fill anything when called and would just recursively call itself until it segmentation faulted. There was very little indication as to why this was happening, until we realized the fill wasn't changing any pixels at all. We determined the problem was that the canvas wasn't being redrawn each time a pixel changed, and that meant the state of the canvas was not the same as what the program thought it was, which not only did no productive work but also eventually resulted in a segmentation fault. After a bit of thinking, trial, and error, we fixed this issue by drawing the canvas every time before floodFill() was called. The algorithm isn't particularly fast in its current implementation for filling huge areas, but it can fill small or medium sized shapes in less than a second.
+
+This algorithm makes use of two helper functions, pix_comp() and draw2(). pix_comp() is responsible for neatening the comparison of two pixels, so instead of having a bulky 'if' statement, a simple function can be passed two Pixel structs and if the nature of their sameness is returned as an integer. draw2() is almost the same as draw(), but with the notable lack of any dependence on the radius of the tool being currently used. In other words, the floodFill() works the same way regardless of how large of a tool the user has chosen. This trades efficiency for exactness in a lot of cases, because though a large tool would fill many pixels at once, there would be some pixels lost in the effort, and perhaps some bleed over outside drawn shapes.
 
 ## Results
 
