@@ -19,8 +19,10 @@ This will work on Ubuntu, but is not guaranteed to work on all distributions. If
 
 After that, glone the repo and make the repository with:
 
-```git clone https://github.com/SeanCCarter/SoftSysDebonairDaffodils```
-```make```
+```git clone https://github.com/SeanCCarter/SoftSysDebonairDaffodils
+
+make```
+
 ## How to Use
 
 ## License 
