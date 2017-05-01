@@ -396,7 +396,7 @@ int main(int argc, char* argv[]) {
 						SDL_GetMouseState(&mouse_x, &mouse_y);
 						printf("filling.\n");
 						Pixel* pix = get_pixel_value(canvas, mouse_x,mouse_y);
-						floodFill(mouse_x, mouse_y, pix, fill_tool, canvas);
+						floodFill(mouse_x, mouse_y, pix, user_tool, canvas);
 						break;
 
 
