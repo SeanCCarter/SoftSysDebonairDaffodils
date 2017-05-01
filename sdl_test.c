@@ -94,6 +94,27 @@ void draw(SDL_Surface *surface, int x, int y, Tool* t) {
 	}
 }
 
+void draw2(SDL_Surface *surface, int x, int y, Tool* t) {
+	// draws a... "circle" (actually a square), within the boundaries.
+	uint8_t r = t->r;
+	uint8_t g = t->g;
+	uint8_t b = t->b;
+
+	int i, j;
+
+	int startx = max_of(x, 0);
+	int endx = min_of(x, CANVAS_XWIDTH);
+	int starty = max_of(y, 0);
+	int endy = min_of(y, CANVAS_YWIDTH);
+
+	for (i = startx; i <= endx; i++) {
+		for (j = starty; j <= endy; j++) { // <= or <  -- todo: check.
+			write_pixel_value(surface, i, j, r, g, b);
+		}
+	}
+}
+
+
 int pix_comp(Pixel* pix1, Pixel* pix2) {
 	// Helper function for determining whether two pixels are the same composition or not
 	if(pix1->r == pix2->r && 
@@ -198,27 +219,32 @@ void floodFill(int x,int y, Pixel* orig, Tool* fill, SDL_Surface *surface) {
 	
 	printf("recursing.\n");
 	Pixel* pix = get_pixel_value(surface,x,y);
-
+	
     if(pix_comp(orig, pix) == 1) // make a function that compares
     {
         // putpixel(x,y,fill);
         printf("writing.\n");
         write_pixel_value(surface,x,y,orig->r,orig->g,orig->b);
         if (x+1 < (CANVAS_XWIDTH - 1)) {
+        	draw2(surface, x, y, fill);
         	floodFill(x+1,y,orig,fill,surface);
         }
         if (x+1 < (CANVAS_YWIDTH - 1)) {
+        	draw2(surface, x, y, fill);
         	floodFill(x,y+1,orig,fill,surface);
         }
         if (x-1 > 0) {
+        	draw2(surface, x, y, fill);
         	floodFill(x-1,y,orig,fill,surface);
     	}
         if (y-1 > 0) {
+        	draw2(surface, x, y, fill);
         	floodFill(x,y-1,orig,fill,surface);
     	}
     }
 
-    draw(surface, x, y, fill); // either make a one pixel tool specifically for floodFill or make the step size depend on the tool being used
+
+     // either make a one pixel tool specifically for floodFill or make the step size depend on the tool being used
     
 }
 
@@ -234,6 +260,8 @@ int main(int argc, char* argv[]) {
 	SDL_Event event;
 
 	Tool* user_tool = make_tool();
+	Tool* fill_tool = make_tool();
+	fill_tool->radius = 1;
 
 	int cursor_x = 0;
 	int cursor_y = 0;
@@ -363,7 +391,7 @@ int main(int argc, char* argv[]) {
 						SDL_GetMouseState(&mouse_x, &mouse_y);
 						printf("filling.\n");
 						Pixel* pix = get_pixel_value(canvas, mouse_x,mouse_y);
-						floodFill(mouse_x, mouse_y, pix, user_tool, canvas);
+						floodFill(mouse_x, mouse_y, pix, fill_tool, canvas);
 						break;
 
 
