@@ -119,9 +119,8 @@ int pix_comp(Pixel* pix1, Pixel* pix2) {
 	// Helper function for determining whether two pixels are the same composition or not
 	if(pix1->r == pix2->r && 
     	pix1->g == pix2->g && 
-    	pix1->b == pix2->b && 
-    	pix1->a == pix2->a) {// make a function that compares
-    
+    	pix1->b == pix2->b) 
+	{
     	return 1; 
 	}
 
@@ -219,30 +218,36 @@ void floodFill(int x,int y, Pixel* orig, Tool* fill, SDL_Surface *surface) {
 	
 	printf("recursing.\n");
 	Pixel* pix = get_pixel_value(surface,x,y);
+	Pixel* tool_color = malloc(sizeof(Pixel));
+	tool_color->r = fill->r;
+	tool_color->g = fill->g;
+	tool_color->b = fill->b;
 	
-    if(pix_comp(orig, pix) == 1) // make a function that compares
+    if(pix_comp(orig, pix) == 1 && pix_comp(pix, tool_color) == 0) // make a function that compares
     {
         // putpixel(x,y,fill);
         printf("writing.\n");
         write_pixel_value(surface,x,y,orig->r,orig->g,orig->b);
-        if (x+1 < (CANVAS_XWIDTH - 1)) {
+        if (x+1 < (CANVAS_XWIDTH)) {
         	draw2(surface, x, y, fill);
         	floodFill(x+1,y,orig,fill,surface);
         }
-        if (x+1 < (CANVAS_YWIDTH - 1)) {
+        if (x+1 < (CANVAS_YWIDTH)) {
         	draw2(surface, x, y, fill);
         	floodFill(x,y+1,orig,fill,surface);
         }
-        if (x-1 > 0) {
+        if (x-1 > -1) {
         	draw2(surface, x, y, fill);
         	floodFill(x-1,y,orig,fill,surface);
     	}
-        if (y-1 > 0) {
+        if (y-1 > -1) {
         	draw2(surface, x, y, fill);
         	floodFill(x,y-1,orig,fill,surface);
     	}
     }
-
+    free(pix);
+    free(tool_color);
+    return;
 
      // either make a one pixel tool specifically for floodFill or make the step size depend on the tool being used
     
