@@ -4,6 +4,8 @@
 
 We aim to bring some of the basic fucntionality of MS Paint to the world of Linux. The most essential features are the ability to open a blank image, add shapes of various colors to it, and then save the image again. We used this project as an oportunity to explore the fascinating world of low-level graphics in C.
 
+To learn more about how and why we did it, visit the [project website](https://seanccarter.github.io/SoftSysDebonairDaffodils/).
+
 ## Authors
 - [Matthew Rhuele](https://github.com/matthewruehle)
 - [Gabe Butterick](https://github.com/buttegab)
