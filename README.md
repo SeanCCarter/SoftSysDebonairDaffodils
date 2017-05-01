@@ -1,37 +1,28 @@
-## Welcome to GitHub Pages
+# Sketch-a-Sketch
 
-You can use the [editor on GitHub](https://github.com/SeanCCarter/SoftSysDebonairDaffodils/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+## About Sketch-a-Sketch
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+We aim to bring some of the basic fucntionality of MS Paint to the world of Linux. The most essential features are the ability to open a blank image, add shapes of various colors to it, and then save the image again. We used this project as an oportunity to explore the fascinating world of low-level graphics in C.
 
-### Markdown
+## Authors
+- [Matthew Rhuele](https://github.com/matthewruehle)
+- [Gabe Butterick](https://github.com/buttegab)
+- [Sean Carter](https://github.com/SeanCCarter)
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+## Getting Started
 
-```markdown
-Syntax highlighted code block
+This project requires the SDL2 library which can be installed with the following command:
 
-# Header 1
-## Header 2
-### Header 3
+'''sudo apt-get install libsdl2-dev'''
 
-- Bulleted
-- List
+This will work on Ubuntu, but is not guaranteed to work on all distributions. If it does not work, please follow the instructions [here](https://wiki.libsdl.org/Installation).
 
-1. Numbered
-2. List
+After that, glone the repo and make the repository with:
 
-**Bold** and _Italic_ and `Code` text
+''' git clone https://github.com/SeanCCarter/SoftSysDebonairDaffodils
+    make
+'''
 
-[Link](url) and ![Image](src)
-```
+## How to Use
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/SeanCCarter/SoftSysDebonairDaffodils/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+## License 
