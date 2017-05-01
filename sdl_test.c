@@ -94,6 +94,21 @@ void draw(SDL_Surface *surface, int x, int y, Tool* t) {
 	}
 }
 
+int pix_comp(Pixel* pix1, Pixel* pix2) {
+	// Helper function for determining whether two pixels are the same composition or not
+	if(pix1->r == pix2->r && 
+    	pix1->g == pix2->g && 
+    	pix1->b == pix2->b && 
+    	pix1->a == pix2->a) {// make a function that compares
+    
+    	return 1; 
+	}
+
+    else {
+    	return 0;
+    }
+}
+
 
 
 void print_pixel(Pixel* p) {
@@ -127,6 +142,7 @@ void write_pixel_value(SDL_Surface *surface, int x, int y, uint8_t r, uint8_t g,
 	p[offset + 0] = b;
 	p[offset + 1] = g;
 	p[offset + 2] = r;
+
 }
 
 
@@ -168,6 +184,42 @@ void load_as(SDL_Surface *surface, char* filename) {
 
 
 
+}
+
+
+//Experimental floodfill
+void floodFill(int x,int y, Pixel* orig, Tool* fill, SDL_Surface *surface) {
+	/*
+	x,y - coordinates of the pixel
+	orig - original color of pixel
+	fill - new color for pixel
+	surface - canvas user is working on
+	*/
+	
+	printf("recursing.\n");
+	Pixel* pix = get_pixel_value(surface,x,y);
+
+    if(pix_comp(orig, pix) == 1) // make a function that compares
+    {
+        // putpixel(x,y,fill);
+        printf("writing.\n");
+        write_pixel_value(surface,x,y,orig->r,orig->g,orig->b);
+        if (x+1 < (CANVAS_XWIDTH - 1)) {
+        	floodFill(x+1,y,orig,fill,surface);
+        }
+        if (x+1 < (CANVAS_YWIDTH - 1)) {
+        	floodFill(x,y+1,orig,fill,surface);
+        }
+        if (x-1 > 0) {
+        	floodFill(x-1,y,orig,fill,surface);
+    	}
+        if (y-1 > 0) {
+        	floodFill(x,y-1,orig,fill,surface);
+    	}
+    }
+
+    draw(surface, x, y, fill); // either make a one pixel tool specifically for floodFill or make the step size depend on the tool being used
+    
 }
 
 
@@ -297,20 +349,21 @@ int main(int argc, char* argv[]) {
 				}
 			}
 			else if (event.type == SDL_MOUSEBUTTONDOWN) {
-				switch (event.type) {
-					case SDL_MOUSEBUTTONDOWN:
+				// switch (event.type) {
+				switch (event.button.button) {
+					case SDL_BUTTON_LEFT:
 					// case SDL_MouseButtonEvent:
 					// case SDL_BUTTON(SDL_GetMouseState(NULL,NULL)) == SDL_BUTTON_LEFT:
-						printf("clicked.\n");
+						// printf("clicked.\n");
 						SDL_GetMouseState(&mouse_x, &mouse_y);
 						cursor_x = mouse_x;
 						cursor_y = mouse_y;
 						break;
-					case SDL_MOUSEMOTION:
-						printf("dragging.\n");
+					case SDL_BUTTON_RIGHT:
 						SDL_GetMouseState(&mouse_x, &mouse_y);
-						cursor_x = mouse_x;
-						cursor_y = mouse_y;
+						printf("filling.\n");
+						Pixel* pix = get_pixel_value(canvas, mouse_x,mouse_y);
+						floodFill(mouse_x, mouse_y, pix, user_tool, canvas);
 						break;
 
 
