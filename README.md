@@ -46,7 +46,7 @@ After running the program, you can use the mouse cursor to move your brush, and 
 
 By doing this, you can produce incredible masterpieces like this:
 
-![A beautiful picture](./demos/mona-lisa-equivilent)
+![A beautiful picture](./demos/mona-lisa-equivilent.png)
 
 ## License 
 This program is covered under the [MIT License](https://github.com/SeanCCarter/SoftSysDebonairDaffodils/blob/master/LICENSE.md). 
