@@ -29,9 +29,23 @@ make
 Finally, you can run the program with:
 
 ```
-./sdl_test
+./sdlt
 ```
 
 ## How to Use
 
+After running the program, you can use the mouse cursor to move your brush, and color the canvas by holding down the left mouse button. You can use the fill tool using the right mouse button. These keys are used to control the program:
+
+- r: Switch brush to red
+- g: Switch brush to green
+- b: Switch brush to blue
+- w: Switch brush to white
+- k: Swithc brush to black
+- [: Make brush larger
+- ]: Make brush smaller
+
+By doing this, you can produce incredible masterpieces like this:
+![A beautiful picture](./demos/mona-lisa-equivilent)
+
 ## License 
+This program is covered under the [MIT License](https://github.com/SeanCCarter/SoftSysDebonairDaffodils/blob/master/LICENSE.md). 
