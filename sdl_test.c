@@ -185,7 +185,8 @@ int main(int argc, char* argv[]) {
 
 	int cursor_x = 0;
 	int cursor_y = 0;
-
+	int mouse_x;
+	int mouse_y;
 
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		fprintf(stderr, "SDL couldn't init :(.  Error: %s\n", SDL_GetError());
@@ -287,6 +288,48 @@ int main(int argc, char* argv[]) {
 						load_as(canvas, filename);
 						printf("Loaded.\n");
 						break;
+					
+
+
+					default:
+						fprintf(stdout, "Unrecognized key.\n");
+						break;
+				}
+			}
+			else if (event.type == SDL_MOUSEBUTTONDOWN) {
+				switch (event.type) {
+					case SDL_MOUSEBUTTONDOWN:
+					// case SDL_MouseButtonEvent:
+					// case SDL_BUTTON(SDL_GetMouseState(NULL,NULL)) == SDL_BUTTON_LEFT:
+						printf("clicked.\n");
+						SDL_GetMouseState(&mouse_x, &mouse_y);
+						cursor_x = mouse_x;
+						cursor_y = mouse_y;
+						break;
+					case SDL_MOUSEMOTION:
+						printf("dragging.\n");
+						SDL_GetMouseState(&mouse_x, &mouse_y);
+						cursor_x = mouse_x;
+						cursor_y = mouse_y;
+						break;
+
+
+					default:
+						fprintf(stdout, "Unrecognized key.\n");
+						break;
+				}
+			}
+
+			else if (event.type == SDL_MOUSEMOTION && event.motion.state == SDL_PRESSED) {
+				switch (event.type) {
+					case SDL_MOUSEMOTION:
+						printf("dragging.\n");
+						SDL_GetMouseState(&mouse_x, &mouse_y);
+						cursor_x = mouse_x;
+						cursor_y = mouse_y;
+						break;
+
+
 					default:
 						fprintf(stdout, "Unrecognized key.\n");
 						break;
