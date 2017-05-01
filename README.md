@@ -12,15 +12,17 @@ Our project was a simpler tool, designed to edit a [pixmap](https://en.wiktionar
 Sketch-a-Sketch is a large program built around editing a single, very long array (of size height\*width\*4). Starting from the left hand corner, every value in the array represents an (r,g,b,a) value, which are indexed and edited by various helper functions that we have created. We use the [SDL2 library](https://wiki.libsdl.org/) to display this in a new window, as well as access mouse and key commands that control what pixels are changing.
 
 ##### Finding the Right Library
-We spent a lot of time identifying the SDL2 library as the one that we needed. It is important do discuss this , since much of the difficulty of the project came from finding tools that either contained the full suite of options that we needed, or were compatable with each other. Most of them had limeted, overly complex, or simply innacurate documentation. SDL (the one we used) is designed to provide access to low level mouse and key events, while displaying a canvas. This made it ideal for our purposes. For future students who may wish to work with pixel values in the same way, these were some of the ones that didn't work:
+We spent a lot of time identifying the SDL2 library as the one that we needed. It is important do discuss this, since much of the difficulty of the project came from finding tools that either contained the full suite of options that we needed, or were compatable with each other. Most of them had limeted, overly complex, or simply innacurate documentation. SDL (the one we used) is designed to provide access to low level mouse and key events, while displaying a canvas. This made it ideal for our purposes. For future students who may wish to work with pixel values in the same way, these were some of the ones that didn't work:
 
 - GTK: GTK provided good tools and a canvas, but no access to individula pixel values
 - GTK + Keras: The GTK documentation stated that Keras allowed access to individual pixel values, but the two libraries are not actually compatable. 
 - \<graphics.h\> : Unfortunately, this was excellent, but it was a windows only library
 
 ##### The Pixmap
+The core of the project is the implementation
 
 ##### Opening and Saving Files
+The implimentaion of file saving is very simple. We open a standard file object, write the array to it bit by bit, and then close the file. We open the file in the same way - by assuming the file only contains uint8_t integers. This does require us to make assumptions about the size of the image, since we do not encode any of that information inside of the file itself.
 
 ##### Floodfill
 
