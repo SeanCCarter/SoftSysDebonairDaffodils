@@ -190,14 +190,10 @@ int main(int argc, char* argv[]) {
 	parse_start_args(argc, argv, &to_clear, &etch_mode);
 
 	SDL_Window* window = NULL;
-	SDL_Renderer* renderer = NULL;  // not sure if NULL declaration is necessary.
-									// also might not actually ever need a renderer.
 	SDL_Surface* canvas = NULL;
 	SDL_Event event;
 
 	Tool* user_tool = make_tool();
-	Tool* fill_tool = make_tool();
-	fill_tool->radius = 1;
 
 	int cursor_x = 0;
 	int cursor_y = 0;
@@ -221,7 +217,6 @@ int main(int argc, char* argv[]) {
 		exit(1);
 	}
 
-	renderer = SDL_CreateRenderer(window, -1, 0);
 
 	canvas = SDL_GetWindowSurface(window);
 
@@ -300,18 +295,15 @@ int main(int argc, char* argv[]) {
 				// switch (event.type) {
 				switch (event.button.button) {
 					case SDL_BUTTON_LEFT:
-					// case SDL_MouseButtonEvent:
-					// case SDL_BUTTON(SDL_GetMouseState(NULL,NULL)) == SDL_BUTTON_LEFT:
-						// printf("clicked.\n");
 						SDL_GetMouseState(&mouse_x, &mouse_y);
 						cursor_x = mouse_x;
 						cursor_y = mouse_y;
 						break;
 					case SDL_BUTTON_RIGHT:
 						SDL_GetMouseState(&mouse_x, &mouse_y);
-						// printf("filling.\n");
 						Pixel* pix = get_pixel_value(canvas, mouse_x,mouse_y);
 						floodFill(mouse_x, mouse_y, pix, user_tool, canvas);
+						free(pix);
 						break;
 
 
@@ -324,7 +316,6 @@ int main(int argc, char* argv[]) {
 			else if (event.type == SDL_MOUSEMOTION && event.motion.state == SDL_PRESSED) {
 				switch (event.type) {
 					case SDL_MOUSEMOTION:
-						// printf("dragging.\n");
 						SDL_GetMouseState(&mouse_x, &mouse_y);
 						cursor_x = mouse_x;
 						cursor_y = mouse_y;
@@ -337,18 +328,17 @@ int main(int argc, char* argv[]) {
 				}
 			}
 		}
-	// if (etch_mode) {
-	// 	draw(canvas, cursor_x, cursor_y, user_tool);
-	// }
+
 	draw(canvas, cursor_x, cursor_y, user_tool);
 
 
 	SDL_UpdateWindowSurface(window);
-
 	}
 
 	SDL_FreeSurface(canvas);
 	SDL_DestroyWindow(window);
+	free(user_tool);
 	SDL_Quit();
+
 	return 0;
 }

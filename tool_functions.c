@@ -48,21 +48,12 @@ void draw2(SDL_Surface *surface, int x, int y, Tool* t) {
 	uint8_t g = t->g;
 	uint8_t b = t->b;
 
-	int i, j;
-
-	int startx = max_of(x, 0);
-	int endx = min_of(x, CANVAS_XWIDTH-1);
-	int starty = max_of(y, 0);
-	int endy = min_of(y, CANVAS_YWIDTH-1);
-
-	for (i = startx; i <= endx; i++) {
-		for (j = starty; j <= endy; j++) { // <= or <  -- todo: check.
-			write_pixel_value(surface, i, j, r, g, b);
-		}
-	}
+	write_pixel_value(surface, x, y, r, g, b);
+		
+	
 }
 
-//Experimental floodfill
+
 void floodFill(int x,int y, Pixel* orig, Tool* fill, SDL_Surface *surface) {
 	/*
 	x,y - coordinates of the pixel
@@ -70,7 +61,6 @@ void floodFill(int x,int y, Pixel* orig, Tool* fill, SDL_Surface *surface) {
 	fill - new color for pixel
 	surface - canvas user is working on
 	*/
-	// printf("recursing.\n");
 	Pixel* pix = get_pixel_value(surface,x,y);
 	Pixel* tool_color = malloc(sizeof(Pixel));
 	tool_color->r = fill->r;
@@ -79,8 +69,6 @@ void floodFill(int x,int y, Pixel* orig, Tool* fill, SDL_Surface *surface) {
 
     if(pix_comp(orig, pix) == 1 && pix_comp(pix, tool_color) == 0) // make a function that compares
     {
-        // putpixel(x,y,fill);
-        // printf("writing.\n");
         write_pixel_value(surface,x,y,orig->r,orig->g,orig->b);
         if (x+1 < (CANVAS_XWIDTH)) {
         	draw2(surface, x, y, fill);
