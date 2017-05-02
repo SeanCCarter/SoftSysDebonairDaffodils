@@ -7,7 +7,7 @@ We aim to bring some of the basic functionality of MS Paint to the world of Linu
 To learn more about how and why we did it, visit the [project website](https://seanccarter.github.io/SoftSysDebonairDaffodils/).
 
 ## Authors
-- [Matthew Rhuele](https://github.com/matthewruehle)
+- [Matthew Ruehle](https://github.com/matthewruehle)
 - [Gabe Butterick](https://github.com/buttegab)
 - [Sean Carter](https://github.com/SeanCCarter)
 
