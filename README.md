@@ -28,13 +28,21 @@ git clone https://github.com/SeanCCarter/SoftSysDebonairDaffodils
 make
 ```
 
-Finally, you can run the program with:
+Finally, you can run the program (without its command line arguments) with:
 
 ```
-./sdlt
+./skask
 ```
 
 ## How to Use
+
+First, you run the program with ```./skask```. There are several command line arguments that you can use:
+- -h: Help screen
+- -x: Width
+- -y: Height
+- -f: specify filename to load/save as
+- -c: clear the image when loading
+- -e: etch-a-sketch mode (use arrow keys to draw)
 
 After running the program, you can use the mouse cursor to move your brush, and color the canvas by holding down the left mouse button. You can use the fill tool using the right mouse button. These keys are used to control the program:
 
@@ -45,6 +53,7 @@ After running the program, you can use the mouse cursor to move your brush, and 
 - k: Swithc brush to black
 - [: Make brush larger
 - ]: Make brush smaller
+- s:save
 
 By doing this, you can produce incredible masterpieces like this:
 
