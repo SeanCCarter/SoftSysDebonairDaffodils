@@ -2,7 +2,7 @@
 
 ## About Sketch-a-Sketch
 
-We aim to bring some of the basic fucntionality of MS Paint to the world of Linux. The most essential features are the ability to open a blank image, add shapes of various colors to it, and then save the image again. We used this project as an oportunity to explore the fascinating world of low-level graphics in C.
+We aim to bring some of the basic functionality of MS Paint to the world of Linux. The most essential features are the ability to open a blank image, add shapes of various colors to it, and then save the image again. We used this project as an opportunity to explore the fascinating world of low-level graphics in C.
 
 To learn more about how and why we did it, visit the [project website](https://seanccarter.github.io/SoftSysDebonairDaffodils/).
 
@@ -21,7 +21,7 @@ sudo apt-get install libsdl2-dev
 
 This will work on Ubuntu, but is not guaranteed to work on all distributions. If it does not work, please follow the instructions [here](https://wiki.libsdl.org/Installation).
 
-After that, clone the repo and make the repository with:
+After that, clone the repo and make the executable with:
 
 ```
 git clone https://github.com/SeanCCarter/SoftSysDebonairDaffodils
