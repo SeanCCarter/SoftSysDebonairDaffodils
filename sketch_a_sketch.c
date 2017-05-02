@@ -1,14 +1,14 @@
 /*
 	Package Location: sudo apt-get install libsdl2-dev
-	
-    gcc -o myprogram myprogram.c `sdl2-config --cflags --libs` 
+
+    gcc -o myprogram myprogram.c `sdl2-config --cflags --libs`
 
     or
 
     gcc -o myprogram myprogram.c -lSDL2
 
 
-    (here specifically: 
+    (here specifically:
     gcc sdl_test.c -o sdlt `sdl2-config --cflags --libs`
 		todo: makefile that jazz!)
 
@@ -25,7 +25,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
+#include "pixel_functions.h"
+#include "tool_functions.h"
+#include "save_and_load.h"
 
 int CANVAS_XWIDTH = 360;
 int CANVAS_YWIDTH = 240;
@@ -79,143 +81,6 @@ int max_of(int a, int b) {
 }
 
 typedef enum {false, true} bool; // utility because I like true/false.
-
-typedef struct pixel { // tuple-esque way of returning pixel data.
-	uint8_t a;
-	uint8_t r;
-	uint8_t g;
-	uint8_t b;
-} Pixel;
-
-typedef struct tool {
-	int radius;
-	uint8_t r; // more efficient to use an int8, space-wise.
-	uint8_t g; // or perhaps a color enum?
-	uint8_t b;
-} Tool; // or could just do global variables, but anyways.
-
-Tool* make_tool() {
-	// initializes a tool of radius three.
-	Tool* t = malloc(sizeof(Tool));
-	t->radius = 3;
-	t->r = 0;
-	t->g = 0;
-	t->b = 0;
-	return t;
-}
-
-void write_pixel_value(SDL_Surface *surface, int x, int y, uint8_t r, uint8_t g, uint8_t b) {
-	// writes r, g, b to location x, y on surface. Might mix up RGB vs ARGB, BGR, etc.
-	int depth = surface->format->BytesPerPixel;
-	int offset = y * (surface->pitch) + x * depth;
-	uint8_t* p = (uint8_t *) surface->pixels;
-	// uint8_t* p = (uint8_t) surface->pixels + y * surface->pitch + x * depth;
-	p[offset + 0] = b;
-	p[offset + 1] = g;
-	p[offset + 2] = r;
-}
-
-
-void draw(SDL_Surface *surface, int x, int y, Tool* t) {
-	// draws a... "circle" (actually a square), within the boundaries.
-	uint8_t r = t->r;
-	uint8_t g = t->g;
-	uint8_t b = t->b;
-
-	int i, j;
-
-	int startx = max_of(x - t->radius, 0);
-	int endx = min_of(x + t->radius, CANVAS_XWIDTH-1);
-	int starty = max_of(y - t->radius, 0);
-	int endy = min_of(y + t->radius, CANVAS_YWIDTH-1);
-
-	for (i = startx; i <= endx; i++) {
-		for (j = starty; j <= endy; j++) { // <= or <  -- todo: check.
-			write_pixel_value(surface, i, j, r, g, b);
-		}
-	}
-}
-
-void draw2(SDL_Surface *surface, int x, int y, Tool* t) {
-	// draws a... "circle" (actually a square), within the boundaries.
-	// note: why is this a loop? as opposed to just one call?
-	uint8_t r = t->r;
-	uint8_t g = t->g;
-	uint8_t b = t->b;
-
-	int i, j;
-
-	int startx = max_of(x, 0);
-	int endx = min_of(x, CANVAS_XWIDTH-1);
-	int starty = max_of(y, 0);
-	int endy = min_of(y, CANVAS_YWIDTH-1);
-
-	for (i = startx; i <= endx; i++) {
-		for (j = starty; j <= endy; j++) { // <= or <  -- todo: check.
-			write_pixel_value(surface, i, j, r, g, b);
-		}
-	}
-}
-
-
-int pix_comp(Pixel* pix1, Pixel* pix2) {
-	// Helper function for determining whether two pixels are the same composition or not
-	return ((pix1->r == pix2->r) && (pix1->g == pix2->g) && (pix1->b == pix2->b));
-}
-
-void print_pixel(Pixel* p) {
-	// Utility for printing the values of a Pixel*.
-	printf("a:%u\tr:%u\tg:%u\tb:%u\n", p->a, p->r, p->g, p->b);
-}
-
-
-Pixel* get_pixel_value(SDL_Surface *surface, int x, int y) {
-	// Queries a given surface at x and y, returning the values of the pixel stored there as a Pixel.
-	int depth = surface->format->BytesPerPixel; // should usually be CANVAS_DEPTH
-	uint8_t* p = (uint8_t *) surface->pixels;
-	int offset = y * (surface->pitch) + x * depth; // bytes until the relevant ones.
-	Pixel* res = malloc(sizeof(Pixel));
-	res->a = (uint8_t) p[offset + 3]; // might be mixing up the ARGB channel order. TODO: check.
-	res->b = (uint8_t) p[offset + 0];
-	res->g = (uint8_t) p[offset + 1];
-	res->r = (uint8_t) p[offset + 2];
-	return res; // be sure to free() the pixel later.
-}
-
-
-void save_as(SDL_Surface *surface, char* filename) {
-	// Saves the given surface to the target filename.
-	int w = surface->w;
-	int h = surface->h;
-	int depth = surface->format->BytesPerPixel;
-
-	int pitch = surface->pitch;
-
-	uint8_t* p = (uint8_t *) surface->pixels;
-
-	FILE* fd = fopen(filename, "w");
-
-	fwrite(p, sizeof(uint8_t), w*h*depth, fd);
-	fclose(fd);
-}
-
-void load_as(SDL_Surface *surface, char* filename) {
-	// Expects the file to already exist.
-	// Since size is user-defined, this can't handle size changes.
-	// Might be worth changing the save/load encoding to take size info too.
-	int w = surface->w;
-	int h = surface->h;
-	int depth = surface->format->BytesPerPixel;
-
-	int pitch = surface->pitch;
-
-	uint8_t* p = (uint8_t *) surface->pixels;
-
-	FILE* fd = fopen(filename, "r");
-
-	fread(p, sizeof(uint8_t), w*h*depth, fd);
-	fclose(fd);
-}
 
 
 void parse_start_args(int argc, char* argv[], bool* to_clear, bool* etch_a_sketch_mode) {
@@ -318,51 +183,6 @@ void process_color_key(Tool* user_tool, SDL_Event e) {
 	}
 }
 
-//Experimental floodfill
-void floodFill(int x,int y, Pixel* orig, Tool* fill, SDL_Surface *surface) {
-	/*
-	x,y - coordinates of the pixel
-	orig - original color of pixel
-	fill - new color for pixel
-	surface - canvas user is working on
-	*/
-	// printf("recursing.\n");
-	Pixel* pix = get_pixel_value(surface,x,y);
-	Pixel* tool_color = malloc(sizeof(Pixel));
-	tool_color->r = fill->r;
-	tool_color->g = fill->g;
-	tool_color->b = fill->b;
-	
-    if(pix_comp(orig, pix) == 1 && pix_comp(pix, tool_color) == 0) // make a function that compares
-    {
-        // putpixel(x,y,fill);
-        // printf("writing.\n");
-        write_pixel_value(surface,x,y,orig->r,orig->g,orig->b);
-        if (x+1 < (CANVAS_XWIDTH)) {
-        	draw2(surface, x, y, fill);
-        	floodFill(x+1,y,orig,fill,surface);
-        }
-        if (x+1 < (CANVAS_YWIDTH)) {
-        	draw2(surface, x, y, fill);
-        	floodFill(x,y+1,orig,fill,surface);
-        }
-        if (x-1 > -1) {
-        	draw2(surface, x, y, fill);
-        	floodFill(x-1,y,orig,fill,surface);
-    	}
-        if (y-1 > -1) {
-        	draw2(surface, x, y, fill);
-        	floodFill(x,y-1,orig,fill,surface);
-    	}
-    }
-    free(pix);
-    free(tool_color);
-    return;
-
-     // either make a one pixel tool specifically for floodFill or make the step size depend on the tool being used
-    
-}
-
 int main(int argc, char* argv[]) {
 	bool to_clear = false;
 	bool etch_mode = false;
@@ -389,10 +209,10 @@ int main(int argc, char* argv[]) {
 		exit(1);
 	}
 
-	window = SDL_CreateWindow( "window", 	SDL_WINDOWPOS_UNDEFINED, 	
-												SDL_WINDOWPOS_UNDEFINED, 
-												CANVAS_XWIDTH, 				
-												CANVAS_YWIDTH, 
+	window = SDL_CreateWindow( "window", 	SDL_WINDOWPOS_UNDEFINED,
+												SDL_WINDOWPOS_UNDEFINED,
+												CANVAS_XWIDTH,
+												CANVAS_YWIDTH,
 												SDL_WINDOW_SHOWN );
 
 
@@ -406,7 +226,7 @@ int main(int argc, char* argv[]) {
 	canvas = SDL_GetWindowSurface(window);
 
 	SDL_FillRect(canvas, NULL, SDL_MapRGB(canvas->format, 0xFF, 0xFF, 0xFF)); // is 0xFF the proper syntax here?
-	
+
 	// checks if SAVE_AS exists; if it does, load it automatically.
 	if (!to_clear) {
 		FILE *sa = fopen(SAVE_AS,"r");
@@ -468,7 +288,7 @@ int main(int argc, char* argv[]) {
 						load_as(canvas, SAVE_AS);
 						printf("Loaded.\n");
 						break;
-					
+
 
 
 					default:
@@ -522,7 +342,7 @@ int main(int argc, char* argv[]) {
 	// }
 	draw(canvas, cursor_x, cursor_y, user_tool);
 
-	
+
 	SDL_UpdateWindowSurface(window);
 
 	}
