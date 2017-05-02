@@ -42,8 +42,6 @@ void draw(SDL_Surface *surface, int x, int y, Tool* t) {
 }
 
 void draw2(SDL_Surface *surface, int x, int y, Tool* t) {
-	// draws a... "circle" (actually a square), within the boundaries.
-	// note: why is this a loop? as opposed to just one call?
 	uint8_t r = t->r;
 	uint8_t g = t->g;
 	uint8_t b = t->b;
@@ -91,6 +89,5 @@ void floodFill(int x,int y, Pixel* orig, Tool* fill, SDL_Surface *surface) {
     free(tool_color);
     return;
 
-     // either make a one pixel tool specifically for floodFill or make the step size depend on the tool being used
 
 }
